@@ -1,0 +1,121 @@
+#created on: Jan 3, 2011
+package com.anil.drools.service
+
+#list any import classes here.
+import com.anil.drools.model.Fire;
+import com.anil.drools.model.Sprinkler;
+import com.anil.drools.model.Alarm;
+import com.anil.drools.model.Room;
+import org.apache.log4j.Logger;
+
+#declare any global variables here
+global Logger LOGGER;
+
+/*
+	What this rule implies, with respect to the current knowlege session that holds the data
+		If
+			1. If there is NO Alarm() object in the session
+			2. If there is NO Sprinkler() object with "on" flag set to true 
+		then
+			1. Print out the relevant SOP 
+*/
+rule "All ok rule"
+# Salience is used to determine the order in which rules need to be executed.
+# The rule with highest salience gets executed first.
+salience 100
+# The no-loop attribute ensures that the rule modifying the knowledge is not invoked again 
+# as a consequence of its own update, whereas the active-lock attribute ensures that any rules 
+# (with this attribute set to true) in your file are not re-executed as a consequence of modifying 
+# the knowledge. 
+no-loop true	
+	when
+		not Alarm()
+		not Sprinkler( on == true) 
+	then 
+		LOGGER.debug( "Everything is ok!!!");
+end
+
+/*
+	What this rule implies, with respect to the current knowlege session that holds the data(fact).
+	NOTE: The rules fire in the order they are defined in the DRL file.
+		If
+			1. If there exists at least 1 Fire() object in the session 
+		then
+			1. Insert a new Alarm() object in the session
+			2. Print out the relevant SOP 
+*/
+rule "Raise the alarm when there is at least 1 Fire"
+salience 100
+lock-on-active true
+	when
+		exists Fire() 
+	then 
+		insert (new Alarm());
+		LOGGER.debug( "Raised the alarm because at least 1 Fire() object exists in the session" );
+end
+
+/*
+	What this rule implies, with respect to the current knowlege session that holds the data
+		If
+			1. If there is A Fire() object in the session, then use that and set the 
+			object "room" to the rule-scoped variable $room
+			2. If there is A Sprinkler() object with "on" flag set to false and attribute room
+			is same object as the one in the variable $room 
+		then
+			1. Update the Sprinkler object which is referenced through $sprinkler and call its
+			setOn() method with parameter "true"
+			2. Print out the relevant SOP 
+*/
+rule "When there is fire in room, turn on Sprinkler"
+salience 90
+lock-on-active true	
+	when
+		$fire : Fire($room : room)
+		$sprinkler : Sprinkler(room == $room, on == false) 
+	then 
+		modify($sprinkler) { setOn(true)};
+		LOGGER.debug( "Turn ON the sprinkler for room " + $fire.getRoom().getName() );
+end
+
+/*
+	What this rule implies, with respect to the current knowlege session that holds the data
+		If
+			1. If there is A Sprinkler() object with "on" flag set to true and attribute room
+			is same object as the one in the variable $room 
+			3. There is NO Fire() object for that room
+		then
+			1. Update the Sprinkler object which is referenced through $sprinkler and call its
+			setOn() method with parameter "false"
+			2. Print out the relevant SOP 
+*/
+rule "When the fire extinguished, turn off Sprinkler"
+salience 80
+lock-on-active true	
+	when
+		$sprinkler : Sprinkler($room : room, on == true)
+		not Fire( room == $room) 
+	then 
+		modify($sprinkler) { setOn(false)};
+		LOGGER.debug( "Turn OFF the sprinkler for room " + $room.getName() );
+end
+
+/*
+	What this rule implies, with respect to the current knowlege session that holds the data
+		If
+			1. If there is NO Fire() object in the session
+			2. and there is an Alarm() object in the session
+		then
+			1. Remove the referenced Alarm() object from the session
+			2. Print out the relevant SOP 
+*/
+rule "Cancel the alarm when all the fires have gone"
+salience 70
+lock-on-active true
+when
+    not Fire()
+    $alarm : Alarm()
+then
+    retract( $alarm );
+    LOGGER.debug( "Cancel the alarm" );
+end
+

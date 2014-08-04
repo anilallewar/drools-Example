@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/resources"/>
+	<classpathentry kind="src" path="src/main/rules"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/antlr-runtime.jar"/>
+	<classpathentry kind="lib" path="lib/drools-api-5.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/drools-bpmn2.jar"/>
+	<classpathentry kind="lib" path="lib/drools-compiler-5.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/drools-core-5.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/drools-decisiontables-5.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/drools-ide-common.jar"/>
+	<classpathentry kind="lib" path="lib/drools-jsr94.jar"/>
+	<classpathentry kind="lib" path="lib/drools-templates-5.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jsr94.jar"/>
+	<classpathentry kind="lib" path="lib/jxl.jar"/>
+	<classpathentry kind="lib" path="lib/mvel2.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jdt.core_3.6.1.v_A68_R36x.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3_min.jar"/>
+	<classpathentry kind="lib" path="lib/xstream.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
